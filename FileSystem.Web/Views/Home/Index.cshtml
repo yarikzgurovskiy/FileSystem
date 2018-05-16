@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <img src="~/images/file-manager.jpg" alt="FileSystemLogo" class="img-responsive" />
+            <div class="carousel-caption" role="option">
+                <p class="text-center">
+                    @if (User.Identity.IsAuthenticated) {
+                        <a asp-controller="FileSystem" asp-action="Drive" class="btn  btn-lg btn-primary">My Drive</a>
+                    } else {
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-lg btn-primary">Get Started</a>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

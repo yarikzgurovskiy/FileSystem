@@ -1,0 +1,45 @@
+﻿@model FolderEditViewModel
+
+@{
+    ViewData["Title"] = "FolderEdit";
+}
+
+<h2>FolderEdit</h2>
+
+<h4>FolderEditViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="EditFolder">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IsPublic" /> @Html.DisplayNameFor(model => model.IsPublic)
+                    </label>
+                </div>
+            </div>
+            <dl>
+                <dt>Size: @Model.Size</dt>
+                <dt>Total files: @Model.FilesCount</dt>
+                <dt>Total folders: @Model.FoldersCount</dt>
+            </dl>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Drive" asp-route-id="@Model.Id">Back to folder content</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
