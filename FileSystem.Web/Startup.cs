@@ -31,7 +31,7 @@ namespace FileSystem.Web {
                 => options.UseSqlServer(Configuration.GetConnectionString("FileSystem"), b
                 => b.MigrationsAssembly("FileSystem.DAL")));
 
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
 
             services.AddScoped<IFolderService, FolderService>();
             services.AddScoped<IFolderRepository, FolderRepository>();

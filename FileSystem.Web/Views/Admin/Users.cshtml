@@ -1,0 +1,27 @@
+﻿@model UsersViewModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h2>Users</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fullname</th>
+                <th>Username</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(var u in Model.Users) {
+            <tr>
+                <td>@u.FirstName @u.LastName</td>
+                <td>@u.Username</td>
+            </tr>
+                  }
+        </tbody>
+    </table>
+</div>
+

@@ -132,7 +132,8 @@ namespace FileSystem.Web.Controllers {
                 Files = fileService.FindByName(searchName).ToList(),
                 Path = new List<FolderDTO>(),
             };
-            return View("Drive", model);
+            ViewBag.SearchName = searchName;
+            return View("Search", model);
         }
     }
 }

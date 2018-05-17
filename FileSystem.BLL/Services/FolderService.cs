@@ -94,7 +94,8 @@ namespace FileSystem.BLL.Services {
 
         public IEnumerable<FolderDTO> FindByName(string searchName) {
             return unitOfWork.FolderRepository.Folders
-                .Where(f => f.Name.ToLower().Equals(searchName.ToLower()))
+                .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
+                .AsEnumerable()
                 .Select(f => toFolderDto(f));
         }
         

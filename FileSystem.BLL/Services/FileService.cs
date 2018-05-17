@@ -60,7 +60,7 @@ namespace FileSystem.BLL.Services {
 
         public IEnumerable<FileDTO> FindByName(string searchName) {
             return unitOfWork.FileRepository.Files
-                .Where(f => f.Name.ToLower().Equals(searchName.ToLower()))
+                .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
                 .Select(f => toFileDto(f));
         }
     }

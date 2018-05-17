@@ -1,0 +1,42 @@
+﻿@model FolderViewModel
+
+<div>
+    @if (Model.Folders.Count > 0 || Model.Files.Count > 0) {
+        <div class="row">
+            @foreach (var f in Model.Folders) {
+                <div class="col-md-2">
+                    <div class="card" style="width: 18rem">
+                        <img class="card-img-top" src="~/images/folder.png" alt="Card image cap">
+                        <div class="card-body">
+                            <h3 class="card-body">@f.Name</h3>
+                            <form method="post" id="@($"deleteFolder{f.Id}")" asp-action="DeleteFolder" asp-route-id="@f.Id" asp-route-folderId="@f.FolderId"></form>
+                            <a asp-action="Drive" asp-route-id="@f.Id" class="btn btn-success"><span class="glyphicon glyphicon-chevron-right"></span>View</a>
+                            <button type="submit" form="@($"deleteFolder{f.Id}")" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                            <a asp-action="EditFolder" asp-route-id="@f.Id" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </div>
+                    </div>
+                </div>
+            }
+            @foreach (var f in Model.Files) {
+                <div class="col-md-2">
+                    <div class="card" style="width: 18rem">
+                        <img class="card-img-top" src="~/images/file.png" alt="Card image cap">
+                        <div class="card-body">
+                            <h3 class="card-body">@f.Name</h3>
+                            <form method="post" id="@($"deleteFile{f.Id}")" asp-action="DeleteFile" asp-route-id="@f.Id" asp-route-folderId="@f.FolderId"></form>
+                            <a asp-action="DownloadFile" asp-route-id="@f.Id" class="btn btn-primary"><span class="glyphicon glyphicon-download"></span></a>
+                            <button type="submit" form="@($"deleteFile{f.Id}")" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                            <a asp-action="EditFile" asp-route-id="@f.Id" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    } else {
+        <h1>Empty</h1>
+    }
+</div>

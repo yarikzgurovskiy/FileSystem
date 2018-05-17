@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FileSystem.Web.Controllers {
     public class AccountController : Controller {
-        private readonly IUserService userService;
+        private readonly IAccountService accountService;
         
-        public AccountController(IUserService userService) {
-            this.userService = userService;
+        public AccountController(IAccountService accountService) {
+            this.accountService = accountService;
         }
 
         [AcceptVerbs("Get", "Post")]
         public async Task<IActionResult> CheckUserName(string userName) {
-            return Json(!await userService.IsAlreadyRegisteredAsync(userName));
+            return Json(!await accountService.IsAlreadyRegisteredAsync(userName));
         }
 
         [HttpPost]
@@ -29,7 +29,7 @@ namespace FileSystem.Web.Controllers {
                     Password = model.Password,
                     Role = "registered"
                 };
-                var result = await userService.RegisterAsync(user);
+                var result = await accountService.RegisterAsync(user);
                 if (result.Succeeded) {
                     return RedirectToAction("Login");
                 } else {
@@ -46,7 +46,7 @@ namespace FileSystem.Web.Controllers {
         public async Task<IActionResult> Login(LoginViewModel model) {
             if (ModelState.IsValid) {
                 UserDTO user = new UserDTO() { UserName = model.UserName, Password = model.Password };
-                var result = await userService.AuthenticateAsync(user, model.RememberMe);
+                var result = await accountService.AuthenticateAsync(user, model.RememberMe);
 
                 if (result.Succeeded) {
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl)) {
@@ -63,7 +63,7 @@ namespace FileSystem.Web.Controllers {
 
         [Authorize]
         public IActionResult LogOut() {
-            userService.LogOutAsync();
+            accountService.LogOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
