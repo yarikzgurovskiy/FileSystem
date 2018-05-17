@@ -45,21 +45,5 @@ namespace FileSystem.BLL.Services {
         public async void LogOutAsync() {
             await signInManager.SignOutAsync();
         }
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing) {
-            if (!disposed) {
-                if (disposing) {
-                    userManager.Dispose();
-                }
-            }
-            disposed = true;
-        }
-
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FileSystem.DAL.Repositories {
-    public class BaseRepository<T, TContext> : IDisposable  where T : FileSystemElement, new() where TContext : DbContext {
+    public class BaseRepository<T, TContext>  where T : FileSystemElement, new() where TContext : DbContext {
         protected readonly TContext context;
         protected readonly IApplicationUserAccessor userAccessor;
 
@@ -42,23 +42,6 @@ namespace FileSystem.DAL.Repositories {
 
         private void Save() {
             context.SaveChanges();
-        }
-
-        
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing) {
-            if (!disposed) {
-                if (disposing) {
-                    context.Dispose();
-                }
-            }
-            disposed = true;
-        }
-
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

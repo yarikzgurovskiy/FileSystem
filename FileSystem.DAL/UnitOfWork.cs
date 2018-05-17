@@ -23,23 +23,5 @@ namespace FileSystem.DAL {
         public void Save() {
             db.SaveChanges();
         }
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing) {
-            if (!disposed) {
-                if (disposing) {
-                    db.Dispose();
-                    fileRepository.Dispose();
-                    folderRepository.Dispose();
-                }
-                disposed = true;
-            }
-        }
-
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

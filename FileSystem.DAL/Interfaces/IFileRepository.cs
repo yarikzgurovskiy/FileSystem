@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 
 namespace FileSystem.DAL.Interfaces {
-    public interface IFileRepository : IDisposable {
+    public interface IFileRepository {
         IQueryable<File> Files { get; }
         int Add(File file);
         void Update(File file);

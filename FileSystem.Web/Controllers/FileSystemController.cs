@@ -134,13 +134,5 @@ namespace FileSystem.Web.Controllers {
             };
             return View("Drive", model);
         }
-
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                fileService.Dispose();
-                folderService.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

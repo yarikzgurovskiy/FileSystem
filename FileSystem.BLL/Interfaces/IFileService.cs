@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace FileSystem.BLL.Interfaces {
-    public interface IFileService : IDisposable {
+    public interface IFileService {
         FileDTO GetFile(int fileId);
 
         int CreateFile(FileDTO file);

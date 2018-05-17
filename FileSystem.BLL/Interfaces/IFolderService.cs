@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace FileSystem.BLL.Interfaces {
-    public interface IFolderService : IDisposable {
+    public interface IFolderService {
         FolderDTO GetFolder(int folderId);
 
         FolderDTO GetRoot();

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FileSystem.DAL.Interfaces {
-    public interface IFolderRepository : IDisposable {
+    public interface IFolderRepository {
         IQueryable<Folder> Folders { get; }
         int Add(Folder folder);
         void Update(Folder folder);

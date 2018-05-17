@@ -79,12 +79,5 @@ namespace FileSystem.Web.Controllers {
         public IActionResult Index() {
             return View();
         }
-
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                userService.Dispose();
-            }
-            base.Dispose(disposing);
-        }
     }
 }

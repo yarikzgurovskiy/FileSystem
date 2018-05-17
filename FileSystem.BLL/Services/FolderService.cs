@@ -97,22 +97,6 @@ namespace FileSystem.BLL.Services {
                 .Where(f => f.Name.ToLower().Equals(searchName.ToLower()))
                 .Select(f => toFolderDto(f));
         }
-
-        private bool disposed = false;
-
-        protected virtual void Dispose(bool disposing) {
-            if (!disposed) {
-                if (disposing) {
-                    unitOfWork.Dispose();
-                    fileService.Dispose();
-                }
-            }
-            disposed = true;
-        }
-
-        public void Dispose() {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        
     }
 }
