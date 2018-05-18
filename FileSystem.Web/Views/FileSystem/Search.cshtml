@@ -3,7 +3,7 @@
     ViewData["Title"] = "Search";
 }
 
-<h2>Searching for: @ViewBag.SearchName</h2>
+<h2>Search results for: @ViewBag.SearchName</h2>
 <div class="row">
     @{await Html.RenderPartialAsync("_SearchBarPartial"); }
 </div>

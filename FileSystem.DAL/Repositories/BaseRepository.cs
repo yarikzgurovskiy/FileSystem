@@ -21,16 +21,13 @@ namespace FileSystem.DAL.Repositories {
             return entity.Id;
         }
 
-        public void Update(T entity) {
+        public virtual T Update(int entityId, T updatedEntity) {
+            var entity = context.Find<T>(entityId);
             if (entity.UserId != userAccessor.GetUserId())
                 throw new UnauthorizedAccessException("Cannot modify an entity that does not belong to current user");
-            context.Update(entity);
-        }
-
-        public void Remove(T entity) {
-            if (entity.UserId != userAccessor.GetUserId())
-                throw new UnauthorizedAccessException("Cannot remove an entity that does not belong to current user");
-            context.Remove(entity);
+            context.Entry(entity).CurrentValues.SetValues(updatedEntity);
+            context.Entry(entity).Property(e => e.UserId).IsModified = false;
+            return entity;
         }
 
         public void Remove(int id) {

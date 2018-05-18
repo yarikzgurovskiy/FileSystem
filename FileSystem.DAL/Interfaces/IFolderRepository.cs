@@ -9,8 +9,7 @@ namespace FileSystem.DAL.Interfaces {
     public interface IFolderRepository {
         IQueryable<Folder> Folders { get; }
         int Add(Folder folder);
-        void Update(Folder folder);
-        void Remove(Folder f);
+        Folder Update(int id, Folder folder);
         void Remove(int id);
     }
 }

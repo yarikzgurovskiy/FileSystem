@@ -6,8 +6,7 @@ namespace FileSystem.DAL.Interfaces {
     public interface IFileRepository {
         IQueryable<File> Files { get; }
         int Add(File file);
-        void Update(File file);
-        void Remove(File file);
+        File Update(int id, File file);
         void Remove(int id);
     }
 }

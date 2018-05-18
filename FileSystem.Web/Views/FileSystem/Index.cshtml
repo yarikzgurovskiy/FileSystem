@@ -4,22 +4,28 @@
 <h2>@ViewData["Title"]</h2>
 
 <div>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateFolder">
-        Create Folder
-    </button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalLoadFile">
-        Load File
-    </button>
-    @{await Html.RenderPartialAsync("_SearchBarPartial"); }
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            @foreach (var folder in Model.Path) {
-                <li class="breadcrumb-item"><a asp-action="Drive" asp-route-id="@folder.Id">@folder.Name</a></li>
-            }
-            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
-        </ol>
-    </nav>
-    <hr />
+    <div class="row pull-right">
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalCreateFolder">
+            Create Folder
+        </button>
+        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#modalLoadFile">
+            Load File
+        </button>
+    </div>
+    <div class="row">
+        @{await Html.RenderPartialAsync("_SearchBarPartial"); }
+    </div>
+    <hr/>
+    <div class="row">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                @foreach (var folder in Model.Path) {
+                    <li class="breadcrumb-item"><a asp-action="Drive" asp-route-id="@folder.Id">@folder.Name</a></li>
+                }
+                <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+            </ol>
+        </nav>
+    </div>
 </div>
 @{await Html.RenderPartialAsync("_FolderContentPartial", Model);}
 <!-- Create Folder Modal -->

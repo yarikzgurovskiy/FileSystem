@@ -9,6 +9,5 @@ namespace FileSystem.BLL.DTO {
         public string Name { get; set; }
 
         public int? FolderId { get; set; }
-        public int? UserId { get; set; }
     }
 }

@@ -10,11 +10,15 @@
                         <div class="card-body">
                             <h3 class="card-body">@f.Name</h3>
                             <form method="post" id="@($"deleteFolder{f.Id}")" asp-action="DeleteFolder" asp-route-id="@f.Id" asp-route-folderId="@f.FolderId"></form>
+
                             <a asp-action="Drive" asp-route-id="@f.Id" class="btn btn-success"><span class="glyphicon glyphicon-chevron-right"></span>View</a>
-                            <button type="submit" form="@($"deleteFolder{f.Id}")" class="btn btn-danger">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </button>
-                            <a asp-action="EditFolder" asp-route-id="@f.Id" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></a>
+                            @if (f.FolderId.HasValue) {
+                                <button type="submit" form="@($"deleteFolder{f.Id}")" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete folder">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                                <a asp-action="EditFolder" asp-route-id="@f.Id" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Edit folder"><span class="glyphicon glyphicon-pencil"></span></a>
+                            }
+
                         </div>
                     </div>
                 </div>
@@ -27,10 +31,10 @@
                             <h3 class="card-body">@f.Name</h3>
                             <form method="post" id="@($"deleteFile{f.Id}")" asp-action="DeleteFile" asp-route-id="@f.Id" asp-route-folderId="@f.FolderId"></form>
                             <a asp-action="DownloadFile" asp-route-id="@f.Id" class="btn btn-primary"><span class="glyphicon glyphicon-download"></span></a>
-                            <button type="submit" form="@($"deleteFile{f.Id}")" class="btn btn-danger">
+                            <button type="submit" form="@($"deleteFile{f.Id}")" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Delete file">
                                 <span class="glyphicon glyphicon-trash"></span>
                             </button>
-                            <a asp-action="EditFile" asp-route-id="@f.Id" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></a>
+                            <a asp-action="EditFile" asp-route-id="@f.Id" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Edit file"><span class="glyphicon glyphicon-pencil"></span></a>
                         </div>
                     </div>
                 </div>

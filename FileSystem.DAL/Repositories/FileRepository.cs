@@ -19,6 +19,12 @@ namespace FileSystem.DAL.Repositories {
                     .Where(fold => fold.UserId == userId).AsQueryable();
             }
         }
+        public override File Update(int entityId, File updatedEntity) {
+            File entity = base.Update(entityId, updatedEntity);
+            context.Entry(entity).Property(f => f.ContentType).IsModified = false;
+            context.Entry(entity).Property(f => f.FileData).IsModified = false;
+            return entity;
+        }
 
     }
 }

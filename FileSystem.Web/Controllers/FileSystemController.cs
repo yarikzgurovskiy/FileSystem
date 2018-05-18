@@ -22,7 +22,13 @@ namespace FileSystem.Web.Controllers {
 
         [Authorize]
         public IActionResult Drive(int? id) {
-            FolderDTO folder = id != null ? folderService.GetFolder((int)id) : folderService.GetRoot();
+            FolderDTO folder;
+            try {
+                folder = id != null ? folderService.GetFolder((int)id) : folderService.GetRoot();
+            } catch (NullReferenceException) {
+                return NotFound($"No folder with id {id}");
+            }
+
             var model = new FolderViewModel {
                 Folders = folder.Folders,
                 Files = folder.Files,
@@ -103,27 +109,69 @@ namespace FileSystem.Web.Controllers {
                     Id = model.Id,
                     Name = model.Name,
                     IsPublic = model.IsPublic,
-                    UserId = model.UserId
+                    FolderId = model.FolderId
                 };
                 folderService.EditFolder(folder);
-                return RedirectToAction(nameof(Drive), new { id = folder.Id });
+                return RedirectToAction(nameof(Drive), new { id = folder.FolderId });
             }
             return View(model);
         }
 
         [Authorize]
         public IActionResult EditFolder(int id){
-            var folder = folderService.GetFolder(id);
+            FolderDTO folder;
+            try {
+                folder = folderService.GetFolder(id);
+            } catch(NullReferenceException) {
+                return NotFound($"Folder with id {id} doesn't exists");
+            }
+            
             FolderEditViewModel model = new FolderEditViewModel {
                 Id = folder.Id,
                 Name = folder.Name,
                 FilesCount = folder.Files.Count,
                 FoldersCount = folder.Folders.Count,
                 IsPublic = folder.IsPublic,
-                UserId = folder.UserId == null ? 0 : folder.UserId.Value
+                FolderId = folder.FolderId ?? 0
             };
             return View(model);
         }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditFile(FileEditViewModel model) {
+            if (ModelState.IsValid) {
+                FileDTO file = new FileDTO {
+                    Id = model.Id,
+                    Name = model.Name,
+                    IsPublic = model.IsPublic,
+                    FolderId = model.FolderId
+                };
+                fileService.EditFile(file);
+                return RedirectToAction(nameof(Drive), new { id = file.FolderId });
+            }
+            return View(model);
+        }
+
+        [Authorize]
+        public IActionResult EditFile(int id) {
+            FileDTO file;
+            try {
+                file = fileService.GetFile(id);
+            } catch (NullReferenceException) {
+                return NotFound($"File with id {id} doesn't exists");
+            }
+
+            FileEditViewModel model = new FileEditViewModel {
+                Id = file.Id,
+                Name = file.Name,
+                IsPublic = file.IsPublic,
+                Size = file.Data.Length,
+                FolderId = file.FolderId ?? 0
+            };
+            return View(model);
+        }
+
 
         [Authorize]
         public IActionResult Search(string searchName) {

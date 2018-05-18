@@ -1,4 +1,5 @@
-﻿using FileSystem.BLL.DTO;
+﻿using AutoMapper;
+using FileSystem.BLL.DTO;
 using FileSystem.BLL.Interfaces;
 using FileSystem.DAL;
 using FileSystem.DAL.Entities;
@@ -11,17 +12,14 @@ using System.Text;
 namespace FileSystem.BLL.Services {
     public class FileService : IFileService {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IMapper mapper;
 
-        private readonly Func<File, FileDTO> toFileDto;
-        private readonly Func<FileDTO, File> toFile;
-
-        public FileService(IUnitOfWork unitOfWork) {
+        public FileService(IUnitOfWork unitOfWork, IMapper mapper) {
             this.unitOfWork = unitOfWork;
-            toFile = ToFile;
-            toFileDto = ToFileDto;
+            this.mapper = mapper;
         }
         public int CreateFile(FileDTO file) {
-            int newId = unitOfWork.FileRepository.Add(toFile(file));
+            int newId = unitOfWork.FileRepository.Add(mapper.Map<File>(file));
             unitOfWork.Save();
             return newId;
         }
@@ -32,12 +30,13 @@ namespace FileSystem.BLL.Services {
         }
 
         public void EditFile(FileDTO file) {
-            unitOfWork.FileRepository.Update(toFile(file));
+            unitOfWork.FileRepository.Update(file.Id, mapper.Map<File>(file));
             unitOfWork.Save();
         }
 
         public FileDTO GetFile(int fileId) {
-            return toFileDto(unitOfWork.FileRepository.Files.FirstOrDefault(f => f.Id == fileId));
+            return mapper.Map<FileDTO>(unitOfWork.FileRepository.Files
+                .FirstOrDefault(f => f.Id == fileId));
         }
 
         private File ToFile(FileDTO f) => new File {
@@ -45,8 +44,7 @@ namespace FileSystem.BLL.Services {
             FileData = f.Data,
             FolderId = f.FolderId,
             Id = f.Id,
-            ContentType = f.ContentType,
-            UserId = f.UserId
+            ContentType = f.ContentType
         };
 
         private FileDTO ToFileDto(File f) => new FileDTO {
@@ -54,14 +52,13 @@ namespace FileSystem.BLL.Services {
             Data = f.FileData,
             Id = f.Id,
             ContentType = f.ContentType,
-            FolderId = f.FolderId,
-            UserId = f.UserId
+            FolderId = f.FolderId
         };
 
         public IEnumerable<FileDTO> FindByName(string searchName) {
             return unitOfWork.FileRepository.Files
                 .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
-                .Select(f => toFileDto(f));
+                .Select(f => mapper.Map<FileDTO>(f));
         }
     }
 }

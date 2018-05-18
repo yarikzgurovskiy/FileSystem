@@ -1,14 +1,15 @@
-﻿@model FileSystem.Web.Models.FolderEditViewModel
+﻿@model FileSystem.Web.Models.FileEditViewModel
 
 @{
-    ViewData["Title"] = "EditFolder";
+    ViewData["Title"] = "EditFile";
 }
 
-<h2>EditFolder</h2>
+<h2>EditFile</h2>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditFolder">
+        <form asp-action="EditFile">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 @Html.HiddenFor(m => m.FolderId)
@@ -30,17 +31,9 @@
                     <span class="badge">@Model.Size bytes</span>
                     Size
                 </li>
-                <li class="list-group-item list-group-item-info">
-                    <span class="badge">@Model.FoldersCount</span>
-                    Number of folders
-                </li>
-                <li class="list-group-item list-group-item-info">
-                    <span class="badge">@Model.FilesCount</span>
-                    Number of files
-                </li>
             </ul>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default btn-success" />
+                <input type="submit" value="Save" class="btn btn-success" />
             </div>
         </form>
     </div>
