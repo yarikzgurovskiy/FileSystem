@@ -12,16 +12,16 @@ namespace FileSystem.DAL.Repositories {
         public FolderRepository(FileSystemDbContext context, IApplicationUserAccessor userAccessor) : base(context, userAccessor) {
         }
 
-        public IQueryable<Folder> Folders {
+        public IQueryable<Folder> UserFolders {
             get {
                 int userId = userAccessor.GetUserId();
-                return context.Folders
-                    .Include(f => f.Folders)
-                    .Include(f => f.Files)
-                    .Include(f => f.Folder)
-                    .Where(fold => fold.UserId == userId).AsQueryable();
+                return AllFolders.Where(fold => fold.UserId == userId).AsQueryable();
             }
         }
-        
+
+        public IQueryable<Folder> AllFolders => context.Folders
+                    .Include(f => f.Folders)
+                    .Include(f => f.Files)
+                    .Include(f => f.Folder).AsQueryable();
     }
 }

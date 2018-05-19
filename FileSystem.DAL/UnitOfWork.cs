@@ -10,7 +10,11 @@ namespace FileSystem.DAL {
         private readonly IFileRepository fileRepository;
         private readonly IFolderRepository folderRepository;
 
-        public UnitOfWork(IFileRepository fileRepository, IFolderRepository folderRepository, FileSystemDbContext dbContext) {
+        public UnitOfWork(
+            IFileRepository fileRepository, 
+            IFolderRepository folderRepository,
+            FileSystemDbContext dbContext
+        ) {
             this.fileRepository = fileRepository;
             this.folderRepository = folderRepository;
             this.db = dbContext;

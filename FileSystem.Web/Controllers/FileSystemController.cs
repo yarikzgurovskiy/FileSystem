@@ -24,14 +24,14 @@ namespace FileSystem.Web.Controllers {
         public IActionResult Drive(int? id) {
             FolderDTO folder;
             try {
-                folder = id != null ? folderService.GetFolder((int)id) : folderService.GetRoot();
+                folder = id.HasValue ? folderService.GetFolder(id.Value) : folderService.GetRoot();
             } catch (NullReferenceException) {
                 return NotFound($"No folder with id {id}");
             }
 
             var model = new FolderViewModel {
-                Folders = folder.Folders,
-                Files = folder.Files,
+                Folders = folder.Elements.OfType<FolderDTO>().ToList(),
+                Files = folder.Elements.OfType<FileDTO>().ToList(),
                 Id = folder.Id,
                 Path = folderService.Path(folder.Id),
                 Name = folder.Name
@@ -39,13 +39,13 @@ namespace FileSystem.Web.Controllers {
             ViewData["Title"] = "My Drive";
             return View("Index", model);
         }
-
-        [Authorize]
+        
         public IActionResult Public() {
             ViewData["Title"] = "Public";
             FolderViewModel model = new FolderViewModel() {
                 Folders = new List<FolderDTO>(),
-                Files = new List<FileDTO>()
+                Files = new List<FileDTO>(),
+                Path = new List<FolderDTO>(),
             };
             return View("Index", model);
         }
@@ -53,7 +53,7 @@ namespace FileSystem.Web.Controllers {
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateFolder(int folderId, [FromForm] string folderName) {
+        public IActionResult CreateFolder(int folderId, string folderName) {
             if (!String.IsNullOrEmpty(folderName)) {
                 var newFolder = folderService.CreateFolder(new FolderDTO { Name = folderName, FolderId = folderId });
                 return RedirectToAction(nameof(Drive), new { id = folderId });
@@ -108,7 +108,6 @@ namespace FileSystem.Web.Controllers {
                 FolderDTO folder = new FolderDTO {
                     Id = model.Id,
                     Name = model.Name,
-                    IsPublic = model.IsPublic,
                     FolderId = model.FolderId
                 };
                 folderService.EditFolder(folder);
@@ -125,13 +124,13 @@ namespace FileSystem.Web.Controllers {
             } catch(NullReferenceException) {
                 return NotFound($"Folder with id {id} doesn't exists");
             }
-            
+
             FolderEditViewModel model = new FolderEditViewModel {
                 Id = folder.Id,
                 Name = folder.Name,
-                FilesCount = folder.Files.Count,
-                FoldersCount = folder.Folders.Count,
-                IsPublic = folder.IsPublic,
+                FilesCount = folder.Elements.OfType<FileDTO>().Count(),
+                FoldersCount = folder.Elements.OfType<FolderDTO>().Count(),
+                Size = folder.Size,
                 FolderId = folder.FolderId ?? 0
             };
             return View(model);
@@ -177,8 +176,7 @@ namespace FileSystem.Web.Controllers {
         public IActionResult Search(string searchName) {
             var model = new FolderViewModel {
                 Folders = folderService.FindByName(searchName).ToList(),
-                Files = fileService.FindByName(searchName).ToList(),
-                Path = new List<FolderDTO>(),
+                Files = fileService.FindByName(searchName).ToList()
             };
             ViewBag.SearchName = searchName;
             return View("Search", model);

@@ -26,5 +26,9 @@ namespace FileSystem.BLL {
             var id = context.HttpContext.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
             return int.Parse(id);
         }
+
+        public bool IsAdmin() {
+            return context.HttpContext.User.IsInRole("admin");
+        }
     }
 }

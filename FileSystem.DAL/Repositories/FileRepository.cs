@@ -12,7 +12,7 @@ namespace FileSystem.DAL.Repositories {
             : base(context, userAccessor) {
         }
 
-        public IQueryable<File> Files {
+        public IQueryable<File> UserFiles {
             get {
                 int userId = userAccessor.GetUserId();
                 return context.Files

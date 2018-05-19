@@ -23,7 +23,7 @@ namespace FileSystem.DAL.Repositories {
 
         public virtual T Update(int entityId, T updatedEntity) {
             var entity = context.Find<T>(entityId);
-            if (entity.UserId != userAccessor.GetUserId())
+            if (entity.UserId != userAccessor.GetUserId() && !userAccessor.IsAdmin())
                 throw new UnauthorizedAccessException("Cannot modify an entity that does not belong to current user");
             context.Entry(entity).CurrentValues.SetValues(updatedEntity);
             context.Entry(entity).Property(e => e.UserId).IsModified = false;
@@ -32,13 +32,9 @@ namespace FileSystem.DAL.Repositories {
 
         public void Remove(int id) {
             var entity = context.Find<T>(id);
-            if (entity.UserId != userAccessor.GetUserId())
+            if (entity.UserId != userAccessor.GetUserId() && !userAccessor.IsAdmin())
                 throw new UnauthorizedAccessException("Cannot remove an entity that does not belong to current user");
             context.Remove(entity);
-        }
-
-        private void Save() {
-            context.SaveChanges();
         }
     }
 }

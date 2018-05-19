@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using FileSystem.BLL.DTO;
 using FileSystem.BLL.Interfaces;
-using FileSystem.DAL;
 using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace FileSystem.BLL.Services {
     public class FolderService : IFolderService {
@@ -20,7 +20,6 @@ namespace FileSystem.BLL.Services {
             this.mapper = mapper;
         }
 
-
         public int CreateFolder(FolderDTO folder) {
             int newId = unitOfWork.FolderRepository.Add(mapper.Map<Folder>(folder));
             unitOfWork.Save();
@@ -29,12 +28,12 @@ namespace FileSystem.BLL.Services {
 
         public FolderDTO GetFolder(int folderId) {
             return mapper.Map<FolderDTO>(
-                unitOfWork.FolderRepository.Folders
+                unitOfWork.FolderRepository.AllFolders
                 .FirstOrDefault(f => f.Id == folderId));
         }
 
         public FolderDTO GetRoot() {
-            Folder folder = unitOfWork.FolderRepository.Folders
+            Folder folder = unitOfWork.FolderRepository.UserFolders
                 .FirstOrDefault(f => f.FolderId == null);
             if (folder != null) {
                 return mapper.Map<FolderDTO>(folder);
@@ -46,14 +45,16 @@ namespace FileSystem.BLL.Services {
 
         public void DeleteFolder(int id) {
             FolderDTO folderDto = GetFolder(id);
-            folderDto.Folders.ForEach(f => DeleteFolder(f.Id));
-            folderDto.Files.ForEach(f => fileService.DeleteFile(f.Id));
+            folderDto.Elements.ForEach(el => {
+                if (el is FolderDTO) DeleteFolder(el.Id);
+                else fileService.DeleteFile(el.Id);
+            });
             unitOfWork.FolderRepository.Remove(id);
             unitOfWork.Save();
         }
 
         public List<FolderDTO> Path(int folderId) {
-            var folder = unitOfWork.FolderRepository.Folders
+            var folder = unitOfWork.FolderRepository.UserFolders
                 .SingleOrDefault(f => f.Id == folderId);
             List<FolderDTO> folders = new List<FolderDTO>();
             if (folder.FolderId.HasValue) {
@@ -70,10 +71,9 @@ namespace FileSystem.BLL.Services {
         }
 
         public IEnumerable<FolderDTO> FindByName(string searchName) {
-            return unitOfWork.FolderRepository.Folders
+            return unitOfWork.FolderRepository.UserFolders
                 .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
                 .Select(f => mapper.Map<FolderDTO>(f));
         }
-        
     }
 }

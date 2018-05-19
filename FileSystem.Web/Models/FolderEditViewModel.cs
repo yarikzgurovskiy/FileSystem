@@ -14,8 +14,7 @@ namespace FileSystem.Web.Models {
 
         [Required]
         public string Name { get; set; }
-        public bool IsPublic { get; set; }
-        public int Size { get; set; }
+        public ulong Size { get; set; }
         public int FilesCount { get; set; }
         public int FoldersCount { get; set; }
     }

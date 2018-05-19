@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using FileSystem.BLL.DTO;
 using FileSystem.BLL.Interfaces;
-using FileSystem.DAL;
 using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace FileSystem.BLL.Services {
     public class FileService : IFileService {
@@ -35,28 +33,12 @@ namespace FileSystem.BLL.Services {
         }
 
         public FileDTO GetFile(int fileId) {
-            return mapper.Map<FileDTO>(unitOfWork.FileRepository.Files
+            return mapper.Map<FileDTO>(unitOfWork.FileRepository.UserFiles
                 .FirstOrDefault(f => f.Id == fileId));
         }
 
-        private File ToFile(FileDTO f) => new File {
-            Name = f.Name,
-            FileData = f.Data,
-            FolderId = f.FolderId,
-            Id = f.Id,
-            ContentType = f.ContentType
-        };
-
-        private FileDTO ToFileDto(File f) => new FileDTO {
-            Name = f.Name,
-            Data = f.FileData,
-            Id = f.Id,
-            ContentType = f.ContentType,
-            FolderId = f.FolderId
-        };
-
         public IEnumerable<FileDTO> FindByName(string searchName) {
-            return unitOfWork.FileRepository.Files
+            return unitOfWork.FileRepository.UserFiles
                 .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
                 .Select(f => mapper.Map<FileDTO>(f));
         }

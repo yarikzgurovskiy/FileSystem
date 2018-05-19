@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace FileSystem.DAL.Interfaces {
     public interface IFolderRepository {
-        IQueryable<Folder> Folders { get; }
+        IQueryable<Folder> UserFolders { get; }
+        IQueryable<Folder> AllFolders { get; }
         int Add(Folder folder);
         Folder Update(int id, Folder folder);
         void Remove(int id);

@@ -20,6 +20,7 @@ namespace FileSystem.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model) {
             if (ModelState.IsValid) {
                 UserDTO user = new UserDTO() {
@@ -43,6 +44,7 @@ namespace FileSystem.Web.Controllers {
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model) {
             if (ModelState.IsValid) {
                 UserDTO user = new UserDTO() { UserName = model.UserName, Password = model.Password };
@@ -67,11 +69,12 @@ namespace FileSystem.Web.Controllers {
             return RedirectToAction("Index", "Home");
         }
 
-
+        [AllowAnonymous]
         public IActionResult Register() {
             return View();
         }
 
+        [AllowAnonymous]
         public IActionResult Login(string returnUrl = null) {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }

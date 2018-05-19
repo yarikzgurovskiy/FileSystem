@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace FileSystem.Web.Models {
     public class UsersViewModel {
-        public List<UserDTO> Users { get; set; }
+        public IEnumerable<UserDTO> Users { get; set; }
     }
 }

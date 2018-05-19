@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FileSystem.DAL.Interfaces {
     public interface IFileRepository {
-        IQueryable<File> Files { get; }
+        IQueryable<File> UserFiles { get; }
         int Add(File file);
         File Update(int id, File file);
         void Remove(int id);

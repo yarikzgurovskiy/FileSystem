@@ -31,12 +31,12 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-area="" asp-controller="FileSystem" asp-action="Public"><span class="glyphicon glyphicon-folder-open"></span> Public</a></li>
                     @if (User.Identity.IsAuthenticated) {
                         <li><a asp-area="" asp-controller="FileSystem" asp-action="Drive" asp-route-id="@null"><span class="glyphicon glyphicon-folder-close"></span> My Drive</a></li>
-                        <li><a asp-area="" asp-controller="FileSystem" asp-action="Public"><span class="glyphicon glyphicon-folder-open"></span> Public</a></li>
                     }
                     @if (User.IsInRole("admin")) {
-                        <li><a asp-area="" asp-controller="Admin" asp-action=""><span class="glyphicon glyphicon-user"></span> Users Statistic</a></li>
+                        <li><a asp-area="" asp-controller="Admin" asp-action="Users"><span class="glyphicon glyphicon-user"></span> Users Statistic</a></li>
                     }
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
