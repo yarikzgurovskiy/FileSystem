@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FileSystem.DAL {
+namespace FileSystem.DAL.EF {
     public class FileSystemDbContext : IdentityDbContext<User, Role, int> {
         public FileSystemDbContext(DbContextOptions<FileSystemDbContext> options)
             : base(options) { }

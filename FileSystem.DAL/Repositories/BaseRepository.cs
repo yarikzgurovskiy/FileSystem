@@ -18,11 +18,12 @@ namespace FileSystem.DAL.Repositories {
         public int Add(T entity) {
             entity.UserId = userAccessor.GetUserId();
             context.Add(entity);
+            context.SaveChanges();
             return entity.Id;
         }
 
-        public virtual T Update(int entityId, T updatedEntity) {
-            var entity = context.Find<T>(entityId);
+        public virtual T Update(T updatedEntity) {
+            var entity = context.Find<T>(updatedEntity.Id);
             if (entity.UserId != userAccessor.GetUserId() && !userAccessor.IsAdmin())
                 throw new UnauthorizedAccessException("Cannot modify an entity that does not belong to current user");
             context.Entry(entity).CurrentValues.SetValues(updatedEntity);

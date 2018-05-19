@@ -1,10 +1,11 @@
-﻿using FileSystem.DAL.Interfaces;
+﻿using FileSystem.DAL.EF;
+using FileSystem.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FileSystem.DAL {
+namespace FileSystem.DAL.Repositories {
     public class UnitOfWork : IUnitOfWork {
         private readonly DbContext db;
         private readonly IFileRepository fileRepository;

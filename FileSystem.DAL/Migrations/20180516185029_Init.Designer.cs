@@ -10,7 +10,7 @@ using System;
 
 namespace FileSystem.DAL.Migrations
 {
-    [DbContext(typeof(FileSystemDbContext))]
+    [DbContext(typeof(EF.FileSystemDbContext))]
     [Migration("20180516185029_Init")]
     partial class Init
     {

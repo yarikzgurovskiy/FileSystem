@@ -8,7 +8,7 @@ using System.Text;
 
 using FileSystemElement = FileSystem.BLL.DTO.FileSystemElement;
 
-namespace FileSystem.BLL {
+namespace FileSystem.BLL.Infrastructure {
     public class MappingsProfile : Profile {
         public MappingsProfile() {
             CreateMap<File, FileDTO>()

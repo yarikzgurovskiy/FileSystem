@@ -1,4 +1,5 @@
-﻿using FileSystem.DAL.Entities;
+﻿using FileSystem.DAL.EF;
+using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,8 +20,11 @@ namespace FileSystem.DAL.Repositories {
                     .Where(fold => fold.UserId == userId).AsQueryable();
             }
         }
-        public override File Update(int entityId, File updatedEntity) {
-            File entity = base.Update(entityId, updatedEntity);
+
+        public IQueryable<File> AllFiles => context.Files.AsQueryable();
+
+        public override File Update(File updatedEntity) {
+            File entity = base.Update(updatedEntity);
             context.Entry(entity).Property(f => f.ContentType).IsModified = false;
             context.Entry(entity).Property(f => f.FileData).IsModified = false;
             return entity;

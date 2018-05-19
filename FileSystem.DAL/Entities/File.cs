@@ -6,7 +6,8 @@ using System.Text;
 
 namespace FileSystem.DAL.Entities {
     public class File : FileSystemElement {
-        
+        public bool IsPublic { get; set; }
+
         public byte[] FileData { get; set; }
         public string ContentType { get; set; }
     }

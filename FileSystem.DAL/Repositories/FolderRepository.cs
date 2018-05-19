@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FileSystem.DAL.Interfaces;
+using FileSystem.DAL.EF;
 
 namespace FileSystem.DAL.Repositories {
     public class FolderRepository : BaseRepository<Folder, FileSystemDbContext>, IFolderRepository {

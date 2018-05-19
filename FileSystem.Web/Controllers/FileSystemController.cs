@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FileSystem.BLL.DTO;
+using FileSystem.BLL.Exceptions;
 using FileSystem.BLL.Interfaces;
 using FileSystem.Web.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,37 +23,35 @@ namespace FileSystem.Web.Controllers {
 
         [Authorize]
         public IActionResult Drive(int? id) {
-            FolderDTO folder;
-            try {
-                folder = id.HasValue ? folderService.GetFolder(id.Value) : folderService.GetRoot();
-            } catch (NullReferenceException) {
-                return NotFound($"No folder with id {id}");
-            }
+            var folder = id.HasValue
+                ? folderService.GetFolder(id.Value)
+                : folderService.GetRoot();
 
-            var model = new FolderViewModel {
-                Folders = folder.Elements.OfType<FolderDTO>().ToList(),
-                Files = folder.Elements.OfType<FileDTO>().ToList(),
-                Id = folder.Id,
-                Path = folderService.Path(folder.Id),
-                Name = folder.Name
-            };
-            ViewData["Title"] = "My Drive";
-            return View("Index", model);
+            if (folder != null) {
+                var model = new FolderViewModel {
+                    Folders = folder.Elements.OfType<FolderDTO>(),
+                    Files = folder.Elements.OfType<FileDTO>(),
+                    Id = folder.Id,
+                    Path = folderService.Path(folder.Id),
+                    Name = folder.Name
+                };
+                ViewData["Title"] = "My Drive";
+                return View("Index", model);
+            }
+            return NotFound($"No folder with id {id}");
         }
-        
+
         public IActionResult Public() {
             ViewData["Title"] = "Public";
+            var files = fileService.GetAllPublic();
             FolderViewModel model = new FolderViewModel() {
-                Folders = new List<FolderDTO>(),
-                Files = new List<FileDTO>(),
-                Path = new List<FolderDTO>(),
+                Files = files.ToList()
             };
-            return View("Index", model);
+            return View(model);
         }
 
         [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult CreateFolder(int folderId, string folderName) {
             if (!String.IsNullOrEmpty(folderName)) {
                 var newFolder = folderService.CreateFolder(new FolderDTO { Name = folderName, FolderId = folderId });
@@ -65,39 +64,58 @@ namespace FileSystem.Web.Controllers {
 
         [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult LoadFile(int folderId, IFormFile file) {
+            byte[] fileData;
+            try {
+                fileData = fileService.ReadBytes(file, 4);
+            } catch (InvalidFileSizeException) {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
             var fileDto = new FileDTO {
                 Name = file.FileName,
                 FolderId = folderId,
-                ContentType = file.ContentType
+                ContentType = file.ContentType,
+                Data = fileData
             };
-            byte[] fileData = null;
-            using (var binaryReader = new BinaryReader(file.OpenReadStream())) {
-                fileData = binaryReader.ReadBytes((int)file.Length);
-            }
-            fileDto.Data = fileData;
             var newFile = fileService.CreateFile(fileDto);
             return RedirectToAction(nameof(Drive), new { id = folderId });
         }
 
         [Authorize]
         public IActionResult DownloadFile(int id) {
-            var file = fileService.GetFile(id);
-            return File(file.Data, file.ContentType, file.Name);
+            FileDTO file;
+            try {
+                file = fileService.GetFile(id);
+            } catch (UnauthorizedAccessException) {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+
+            if (file != null) {
+                return File(file.Data, file.ContentType, file.Name);
+            } else {
+                return NotFound($"File with id {id} doesn't exists");
+            }
         }
 
         [Authorize]
         [HttpPost]
         public IActionResult DeleteFile(int id, int folderId) {
-            fileService.DeleteFile(id);
+            try {
+                fileService.DeleteFile(id);
+            } catch (UnauthorizedAccessException) {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
             return RedirectToAction(nameof(Drive), new { id = folderId });
         }
 
         [Authorize]
         [HttpPost]
         public IActionResult DeleteFolder(int id, int folderId) {
-            folderService.DeleteFolder(id);
+            try {
+                folderService.DeleteFolder(id);
+            } catch (UnauthorizedAccessException) {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
             return RedirectToAction(nameof(Drive), new { id = folderId });
         }
 
@@ -110,30 +128,36 @@ namespace FileSystem.Web.Controllers {
                     Name = model.Name,
                     FolderId = model.FolderId
                 };
-                folderService.EditFolder(folder);
+                try {
+                    folderService.EditFolder(folder);
+                } catch (UnauthorizedAccessException) {
+                    return StatusCode(StatusCodes.Status403Forbidden);
+                }
                 return RedirectToAction(nameof(Drive), new { id = folder.FolderId });
             }
             return View(model);
         }
 
         [Authorize]
-        public IActionResult EditFolder(int id){
+        public IActionResult EditFolder(int id) {
             FolderDTO folder;
             try {
                 folder = folderService.GetFolder(id);
-            } catch(NullReferenceException) {
-                return NotFound($"Folder with id {id} doesn't exists");
+            } catch (UnauthorizedAccessException) {
+                return StatusCode(StatusCodes.Status403Forbidden);
             }
-
-            FolderEditViewModel model = new FolderEditViewModel {
-                Id = folder.Id,
-                Name = folder.Name,
-                FilesCount = folder.Elements.OfType<FileDTO>().Count(),
-                FoldersCount = folder.Elements.OfType<FolderDTO>().Count(),
-                Size = folder.Size,
-                FolderId = folder.FolderId ?? 0
-            };
-            return View(model);
+            if (folder != null) {
+                FolderEditViewModel model = new FolderEditViewModel {
+                    Id = folder.Id,
+                    Name = folder.Name,
+                    FilesCount = folder.Elements.OfType<FileDTO>().Count(),
+                    FoldersCount = folder.Elements.OfType<FolderDTO>().Count(),
+                    Size = folder.Size,
+                    FolderId = folder.FolderId ?? 0
+                };
+                return View(model);
+            }
+            return NotFound($"Folder with id {id} doesn't exists");
         }
 
         [Authorize]
@@ -146,7 +170,11 @@ namespace FileSystem.Web.Controllers {
                     IsPublic = model.IsPublic,
                     FolderId = model.FolderId
                 };
-                fileService.EditFile(file);
+                try {
+                    fileService.EditFile(file);
+                } catch (UnauthorizedAccessException) {
+                    return StatusCode(StatusCodes.Status403Forbidden);
+                }
                 return RedirectToAction(nameof(Drive), new { id = file.FolderId });
             }
             return View(model);
@@ -157,26 +185,29 @@ namespace FileSystem.Web.Controllers {
             FileDTO file;
             try {
                 file = fileService.GetFile(id);
-            } catch (NullReferenceException) {
-                return NotFound($"File with id {id} doesn't exists");
+            } catch (UnauthorizedAccessException) {
+                return StatusCode(StatusCodes.Status403Forbidden);
             }
 
-            FileEditViewModel model = new FileEditViewModel {
-                Id = file.Id,
-                Name = file.Name,
-                IsPublic = file.IsPublic,
-                Size = file.Data.Length,
-                FolderId = file.FolderId ?? 0
-            };
-            return View(model);
+            if (file != null) {
+                FileEditViewModel model = new FileEditViewModel {
+                    Id = file.Id,
+                    Name = file.Name,
+                    IsPublic = file.IsPublic,
+                    Size = file.Data.Length,
+                    FolderId = file.FolderId ?? 0
+                };
+                return View(model);
+            }
+            return NotFound($"File with id {id} doesn't exists");
         }
 
 
         [Authorize]
         public IActionResult Search(string searchName) {
             var model = new FolderViewModel {
-                Folders = folderService.FindByName(searchName).ToList(),
-                Files = fileService.FindByName(searchName).ToList()
+                Folders = folderService.FindByName(searchName),
+                Files = fileService.FindByName(searchName)
             };
             ViewBag.SearchName = searchName;
             return View("Search", model);

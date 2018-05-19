@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FileSystem.BLL.Interfaces;
 using FileSystem.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileSystem.Web.Controllers {
@@ -24,10 +25,15 @@ namespace FileSystem.Web.Controllers {
         }
 
         [HttpPost]
-        public IActionResult DeleteUser(int id) {
+        public async Task<IActionResult> DeleteUser(int id) {
             try {
-                userService.DeleteUser(id);
-                return RedirectToAction(nameof(Users));
+                IdentityResult result = await userService.DeleteUserAsync(id);
+                if (result.Succeeded) {
+                    return RedirectToAction(nameof(Users));
+                } else {
+                    return BadRequest(result.Errors);
+                }
+                
             } catch (Exception ex) {
                 return BadRequest($"{ex.Message}");
             }

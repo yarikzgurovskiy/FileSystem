@@ -8,18 +8,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSystem.BLL {
+namespace FileSystem.BLL.Infrastructure {
     public class HttpUserAccessor : IApplicationUserAccessor {
-        private readonly UserManager<User> userManager;
         private readonly IHttpContextAccessor context;
 
-        public HttpUserAccessor(UserManager<User> userManager, IHttpContextAccessor context) {
-            this.userManager = userManager;
+        public HttpUserAccessor(IHttpContextAccessor context) {
             this.context = context;
-        }
-
-        public Task<User> GetUser() {
-            return userManager.GetUserAsync(context.HttpContext.User);
         }
 
         public int GetUserId() {

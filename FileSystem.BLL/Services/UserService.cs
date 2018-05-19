@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using FileSystem.DAL.Entities;
+using System.Threading.Tasks;
 
 namespace FileSystem.BLL.Services {
     public class UserService : IUserService {
@@ -26,19 +27,12 @@ namespace FileSystem.BLL.Services {
             this.folderService = folderService;
             this.userManager = userManager;
         }
-        public async void DeleteUser(int userId) {
+        public Task<IdentityResult> DeleteUserAsync(int userId) {
             FolderDTO folder = mapper.Map<FolderDTO>(unitOfWork.FolderRepository.AllFolders
                 .FirstOrDefault(f => !f.FolderId.HasValue && f.UserId == userId));
             folderService.DeleteFolder(folder.Id);
-
-            User user = await userManager.FindByIdAsync(userId.ToString());
-            var rolesForUser = await userManager.GetRolesAsync(user);
-            if (rolesForUser.Count() > 0) {
-                foreach (var item in rolesForUser) {
-                    await userManager.RemoveFromRoleAsync(user, item);
-                }
-            }
-            await userManager.DeleteAsync(user);
+            User user = userManager.Users.FirstOrDefault(u => u.Id == userId);
+            return userManager.DeleteAsync(user);
         }
 
         public IEnumerable<UserDTO> GetUsers() {

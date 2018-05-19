@@ -18,13 +18,6 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="IsPublic" /> @Html.DisplayNameFor(model => model.IsPublic)
-                    </label>
-                </div>
-            </div>
             <ul class="list-group">
                 <li class="list-group-item list-group-item-info">
                     <span class="badge">@Model.Size bytes</span>

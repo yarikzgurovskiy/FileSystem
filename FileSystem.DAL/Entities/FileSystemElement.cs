@@ -7,7 +7,6 @@ namespace FileSystem.DAL.Entities {
     public class FileSystemElement {
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool IsPublic { get; set; }
         public int? UserId { get; set; }
 
         [ForeignKey("UserId")]

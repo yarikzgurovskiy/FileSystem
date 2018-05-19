@@ -10,7 +10,7 @@ namespace FileSystem.DAL.Interfaces {
         IQueryable<Folder> UserFolders { get; }
         IQueryable<Folder> AllFolders { get; }
         int Add(Folder folder);
-        Folder Update(int id, Folder folder);
+        Folder Update(Folder folder);
         void Remove(int id);
     }
 }

@@ -1,0 +1,25 @@
+﻿@model FolderViewModel
+@{
+    ViewData["Title"] = "Public";
+}
+
+<h2>Public</h2>
+<hr />
+@if (Model.Files.Any()) {
+    <div class="row">
+        @foreach (var f in Model.Files) {
+            <div class="col-md-2">
+                <div class="card" style="width: 18rem">
+                    <img class="card-img-top" src="~/images/file.png" alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-body">@f.Name</h4>
+                        <a asp-action="DownloadFile" asp-route-id="@f.Id" class="btn btn-primary"><span class="glyphicon glyphicon-download"></span> DownLoad</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+} else {
+    <h1>Empty</h1>
+}
+

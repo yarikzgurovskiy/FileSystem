@@ -1,11 +1,17 @@
 ﻿using AutoMapper;
 using FileSystem.BLL.DTO;
+using FileSystem.BLL.Exceptions;
 using FileSystem.BLL.Interfaces;
+
 using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+
+using File = FileSystem.DAL.Entities.File;
 
 namespace FileSystem.BLL.Services {
     public class FileService : IFileService {
@@ -28,12 +34,13 @@ namespace FileSystem.BLL.Services {
         }
 
         public void EditFile(FileDTO file) {
-            unitOfWork.FileRepository.Update(file.Id, mapper.Map<File>(file));
+            unitOfWork.FileRepository.Update(mapper.Map<File>(file));
             unitOfWork.Save();
         }
 
         public FileDTO GetFile(int fileId) {
-            return mapper.Map<FileDTO>(unitOfWork.FileRepository.UserFiles
+            return mapper.Map<FileDTO>(unitOfWork.FileRepository
+                .AllFiles
                 .FirstOrDefault(f => f.Id == fileId));
         }
 
@@ -41,6 +48,22 @@ namespace FileSystem.BLL.Services {
             return unitOfWork.FileRepository.UserFiles
                 .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
                 .Select(f => mapper.Map<FileDTO>(f));
+        }
+
+        public IEnumerable<FileDTO> GetAllPublic() {
+            return unitOfWork.FileRepository.AllFiles
+                .Where(f => f.IsPublic)
+                .Select(f => mapper.Map<FileDTO>(f));
+        }
+
+        public byte[] ReadBytes(IFormFile file, int megabytesLimit) {
+            if (file.Length > megabytesLimit * 1024 * 1024)
+                throw new InvalidFileSizeException($"File size must be less than {megabytesLimit} MB");
+            byte[] fileData = null;
+            using (var binaryReader = new BinaryReader(file.OpenReadStream())) {
+                fileData = binaryReader.ReadBytes((int)file.Length);
+            }
+            return fileData;
         }
     }
 }

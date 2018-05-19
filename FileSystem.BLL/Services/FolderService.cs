@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FileSystem.BLL.DTO;
 using FileSystem.BLL.Interfaces;
+
 using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
 using System;
@@ -21,14 +22,15 @@ namespace FileSystem.BLL.Services {
         }
 
         public int CreateFolder(FolderDTO folder) {
-            int newId = unitOfWork.FolderRepository.Add(mapper.Map<Folder>(folder));
+            int newId = unitOfWork.FolderRepository
+                .Add(mapper.Map<Folder>(folder));
             unitOfWork.Save();
             return newId;
         }
 
         public FolderDTO GetFolder(int folderId) {
-            return mapper.Map<FolderDTO>(
-                unitOfWork.FolderRepository.AllFolders
+            return mapper.Map<FolderDTO>(unitOfWork.FolderRepository
+                .AllFolders
                 .FirstOrDefault(f => f.Id == folderId));
         }
 
@@ -58,7 +60,11 @@ namespace FileSystem.BLL.Services {
                 .SingleOrDefault(f => f.Id == folderId);
             List<FolderDTO> folders = new List<FolderDTO>();
             if (folder.FolderId.HasValue) {
-                folders.Add(new FolderDTO { Id = folder.FolderId.Value, Name = folder.Folder.Name });
+                folders.Add(
+                    new FolderDTO {
+                        Id = folder.FolderId.Value,
+                        Name = folder.Folder.Name
+                    });
                 folders.AddRange(Path(folder.FolderId.Value));
             }
             folders.Reverse();
@@ -66,12 +72,13 @@ namespace FileSystem.BLL.Services {
         }
 
         public void EditFolder(FolderDTO folder) {
-            unitOfWork.FolderRepository.Update(folder.Id, mapper.Map<Folder>(folder));
+            unitOfWork.FolderRepository.Update(mapper.Map<Folder>(folder));
             unitOfWork.Save();
         }
 
         public IEnumerable<FolderDTO> FindByName(string searchName) {
-            return unitOfWork.FolderRepository.UserFolders
+            return unitOfWork.FolderRepository
+                .UserFolders
                 .Where(f => f.Name.ToLower().Contains(searchName.ToLower()))
                 .Select(f => mapper.Map<FolderDTO>(f));
         }

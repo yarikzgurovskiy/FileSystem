@@ -11,9 +11,10 @@ using System;
 namespace FileSystem.DAL.Migrations
 {
     [DbContext(typeof(EF.FileSystemDbContext))]
-    partial class FileSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180519124402_DeleteFolderIsPublic")]
+    partial class DeleteFolderIsPublic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

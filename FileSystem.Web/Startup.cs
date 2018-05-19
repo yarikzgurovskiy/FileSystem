@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using FileSystem.BLL;
+﻿using AutoMapper;
+
+using FileSystem.BLL.Infrastructure;
 using FileSystem.BLL.Interfaces;
 using FileSystem.BLL.Services;
+
 using FileSystem.DAL;
+using FileSystem.DAL.EF;
 using FileSystem.DAL.Entities;
 using FileSystem.DAL.Interfaces;
 using FileSystem.DAL.Repositories;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
