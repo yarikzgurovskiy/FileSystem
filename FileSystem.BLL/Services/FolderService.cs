@@ -27,7 +27,7 @@ namespace FileSystem.BLL.Services {
             unitOfWork.Save();
             return newId;
         }
-
+        
         public FolderDTO GetFolder(int folderId) {
             return mapper.Map<FolderDTO>(unitOfWork.FolderRepository
                 .AllFolders
