@@ -81,14 +81,10 @@ namespace FileSystem.Web.Controllers {
             return RedirectToAction(nameof(Drive), new { id = folderId });
         }
 
-        [Authorize]
+       
         public IActionResult DownloadFile(int id) {
-            FileDTO file;
-            try {
-                file = fileService.GetFile(id);
-            } catch (UnauthorizedAccessException) {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
+            FileDTO file = fileService.GetFile(id);
+            
 
             if (file != null) {
                 return File(file.Data, file.ContentType, file.Name);

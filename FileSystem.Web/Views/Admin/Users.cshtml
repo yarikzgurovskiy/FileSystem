@@ -11,7 +11,6 @@
             <tr>
                 <th>Fullname</th>
                 <th>Username</th>
-                <th>Role</th>
             </tr>
         </thead>
         <tbody>
@@ -19,7 +18,6 @@
                 <tr>
                     <td>@u.FirstName @u.LastName</td>
                     <td>@u.UserName</td>
-                    <td>@u.Role</td>
                     @if (!u.UserName.Equals(User.Identity.Name)) {
                         <td>
                             <form asp-action="DeleteUser" asp-route-id="@u.Id" id="deleteUser@($"{u.Id}")">
